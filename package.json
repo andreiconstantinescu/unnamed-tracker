@@ -1,0 +1,19 @@
+{
+  "name": "unnamed-tracker",
+  "description": "simple team task tracking tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreiconstantinescu/unnamed-tracker"
+  },
+  "author": "Andrei Constantinescu <andrei.c@icloud.com>",
+  "bugs": {
+    "url": "https://github.com/andreiconstantinescu/unnamed-tracker/issues"
+  },
+  "homepage": "https://github.com/andreiconstantinescu/test-website",
+  "dependencies": {
+    "dns": "^0.2.2",
+    "express": "^4.10.6",
+    "ping": "^0.1.9",
+    "when": "^3.6.4"
+  }
+}

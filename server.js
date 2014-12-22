@@ -5,12 +5,16 @@ var app = express();
 
 var port = 1337;
 
-app.get('/', function (req, res) {
-  res.status(200);
+app.get('/', function (request, response) {
+  response.status(200);
   scanner.then(function (users) {
-    res.send(users);
-    res.end();
+    response.send(users);
+    response.end();
   });
+});
+
+app.get('/api/1.0/current', function (request, response) {
+
 });
 
 app.listen(port, function () {

@@ -15,7 +15,7 @@ function testIp(ip) {
     ping.sys.probe(ip, function (online) {
       resolve(online);
     });
-  })
+  });
 }
 
 function foreachIpIn(network, cb2) {

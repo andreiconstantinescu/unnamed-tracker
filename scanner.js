@@ -18,10 +18,6 @@ function testIp(ip) {
   })
 }
 
-function toDecInt(elem) {
-  return parseInt(elem, 10);
-}
-
 function foreachIpIn(network, cb2) {
   var n = [network];
   var current;

@@ -10,8 +10,9 @@ app.get('/', function (req, res) {
   scanner.then(function (users) {
     res.send(users);
     res.end();
-  })
+  });
 });
 
-app.listen(port);
-console.log('Server running at http://localhost:' + port);
+app.listen(port, function () {
+  console.log('Server running at http://localhost:' + port);
+});

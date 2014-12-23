@@ -14,6 +14,13 @@ var options = {
 };
 
 module.exports = {
+  getProjects: function () {
+    options.uri = process.env.TRACK_URI.concat('workspaces/', process.env.TRACK_TEAM, '/projects');
+
+    return request(options).catch(function (err) {
+      throw err.error;
+    });
+  },
   getUsers: function () {
     options.uri = process.env.TRACK_URI.concat('workspaces/', process.env.TRACK_TEAM, '/workspace_users');
 

@@ -38,6 +38,18 @@ app.get('/api/1.0/users', function (request, response) {
   });
 });
 
+app.get('/api/1.0/projects', function (request, response) {
+  tracker.getProjects().then(function (data) {
+    response.status(200);
+    response.send(data);
+    response.end();
+  }).catch(function (err) {
+    response.status(500);
+    response.send(err.message);
+    response.end();
+  });
+});
+
 app.listen(port, function () {
   console.log('Server running at http://localhost:' + port);
 });

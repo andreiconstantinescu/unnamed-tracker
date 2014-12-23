@@ -1,6 +1,6 @@
 {
   "name": "unnamed-tracker",
-  "version": "0.0.1",
+  "varsion": "0.0.1",
   "description": "simple team task tracking tool",
   "repository": {
     "type": "git",
@@ -11,11 +11,4 @@
     "url": "https://github.com/andreiconstantinescu/unnamed-tracker/issues"
   },
   "homepage": "https://github.com/andreiconstantinescu/test-website",
-  "dependencies": {
-    "dns": "^0.2.2",
-    "express": "^4.10.6",
-    "ping": "^0.1.9",
-    "request-promise": "^0.3.2",
-    "when": "^3.6.4"
-  }
 }

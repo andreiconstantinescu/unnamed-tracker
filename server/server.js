@@ -1,9 +1,10 @@
 var express = require('express');
-var scanner = require('./scanner.js').ping('192.168.28.1');
+var scanner = require('./lib/scanner').ping(process.env.NETWORK);
+var tracker = require('./lib/tracker');
 
 var app = express();
 
-var port = 1337;
+var port = process.env.PORT || 1337;
 
 app.get('/', function (request, response) {
   response.status(200);
@@ -14,7 +15,15 @@ app.get('/', function (request, response) {
 });
 
 app.get('/api/1.0/current', function (request, response) {
-
+  tracker.getData().then(function (data) {
+    response.status(200);
+    response.send(data);
+    response.end();
+  }, function (err) {
+    response.status(500);
+    response.send(err.message);
+    response.end();
+  });
 });
 
 app.listen(port, function () {

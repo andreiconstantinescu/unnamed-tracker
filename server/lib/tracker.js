@@ -1,8 +1,6 @@
 'use strict';
 
 var request = require('request-promise');
-var fs = require('fs');
-var when = require('when');
 
 var options = {
   method: 'GET',

@@ -70,8 +70,9 @@ gulp.task('js:bower', function () {
 });
 
 // Build JS dependencies
-gulp.task('js:dependencies', ['templates', 'js:bower'], function () {});
+gulp.task('js:deps', ['templates', 'js:bower'], function () {});
 
+// This function takes some options (from other gulptasks) and applies them on the stream before generating the main.js file needed for the rest of the tasks
 function droolJS (options) {
   options = options || {};
 
@@ -109,3 +110,21 @@ function droolJS (options) {
   .pipe(source(paths.client + '/js/main.js'))
   .pipe($.rename('main.js'));
 }
+
+// Generate js bundle incrementally with browserify
+gulp.task('js', ['js:deps'], function () {
+  return droolJS({
+    debug: true,
+    incremental: true,
+  }).pipe(gulp.dest(paths.public + '/js/'))
+  .pipe(browserSync.reload({stream: true}));
+});
+
+// Generate js bundle incrementally with browserify for watch.
+gulp.task('js:no-deps', function () {
+  return droolJS({
+    debug: true,
+    incremental: true,
+  }).pipe(gulp.dest(paths.public + '/js/'))
+  .pipe(browserSync.reload({stream: true}));
+});

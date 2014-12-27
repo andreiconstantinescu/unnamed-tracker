@@ -15,7 +15,7 @@ var gulp = require('gulp');
 var source = require('vinyl-source-stream');
 var wiredep = require('wiredep');
 
-var penthouse = require('penthouse');
+// var penthouse = require('penthouse');
 var templatizer = require('templatizer');
 var mainBowerFiles = require('main-bower-files');
 var browserSync = require('browser-sync');
@@ -127,4 +127,34 @@ gulp.task('js:no-deps', function () {
     incremental: true,
   }).pipe(gulp.dest(paths.public + '/js/'))
   .pipe(browserSync.reload({stream: true}));
+});
+
+function droolHTML() {
+  return gulp.src(path.join(paths.client, 'index.jade'))
+    .pipe($.jade({
+      pretty: true
+    }))
+    .pipe(wiredep());
+}
+
+// Generate index.html for development
+gulp.task('index', function () {
+  return droolHTML()
+  .pipe(gulp.dest(paths.public))
+  .pipe(browserSync.reload({
+    stream: true
+  }));
+});
+
+// Generate index.html for production
+gulp.task('index:dist', ['js:deps'], function () {
+  return droolHTML()
+  .pipe($.tap(function (file) {
+    var res = useref(file.contents.toString());
+    file.contents = new Buffer(res[0]);
+    // Needed to build the JS and the CSS
+    config.shared.refSpec = res[1];
+  }))
+  .pipe($.minifyHtml())
+  .pipe(gulp.dest(paths.public));
 });

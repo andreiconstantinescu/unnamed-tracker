@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('./_config');
+var config = require('./lib/_config');
 var paths = config.paths;
 var $ = config.plugins;
 
@@ -24,11 +24,11 @@ var StreamQueue = require('streamqueue');
 
 var browserify = require('browserify');
 var watchify = require('watchify');
-var istanbul = require('browserify-istanbul');
 var debowerify = require('debowerify');
 var deamdify = require('deamdify');
 var aliasify = require('aliasify');
 var filterTransform = require('filter-transform');
+var resolveUseref = require('./lib/resolve-useref');
 
 // Generate JS functions from JADE templates
 gulp.task('templates', function () {
@@ -157,4 +157,28 @@ gulp.task('index:dist', ['js:deps'], function () {
   }))
   .pipe($.minifyHtml())
   .pipe(gulp.dest(paths.public));
+});
+
+
+function droolCSS() {
+  return gulp.src(paths.join(paths.client, 'css/main.styl'))
+    .pipe($.expectFile({ errorOnFailure: true, silent: true }, '**/*.styl'))
+    .pipe($.stylus(config.stylus))
+    .pipe($.autoprefixer(config.autoprefixer));
+}
+
+// Generate development-css
+gulp.task('css', function () {
+  return droolCSS()
+    .pipe(gulp.dest(path.join(paths.public, 'css')))
+    .pipe(browserSync.reload({stream: true}));
+});
+
+// Generate production-css
+gulp.task('css:dist', ['index.html:dist'], function () {
+  //Needed to generate critical CSS
+  config.shared.mainCssPath = path.normalize('css/main.css');
+  return resolveUseref(droolCSS(), config.shared.refSpec.css, 'css/main.css')
+    .pipe($.minifyCss())
+    .pipe(gulp.dest(paths.public));
 });

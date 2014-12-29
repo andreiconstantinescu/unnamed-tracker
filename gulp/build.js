@@ -32,6 +32,7 @@ var filterTransform = require('filter-transform');
 var resolveUseref = require('./lib/resolve-useref');
 
 var express = require('express');
+var makeSymlink = require('./common/make-symlink');
 
 // Generate JS functions from JADE templates
 gulp.task('templates', function () {
@@ -178,7 +179,7 @@ gulp.task('css', function () {
 });
 
 // Generate production-css
-gulp.task('css:dist', ['index.html:dist'], function () {
+gulp.task('css:dist', ['index:dist'], function () {
   //Needed to generate critical CSS
   config.shared.mainCssPath = path.normalize('css/main.css');
   return resolveUseref(droolCSS(), config.shared.refSpec.css, 'css/main.css')
@@ -220,3 +221,71 @@ gulp.task('css:critical:replace', ['css:critical'], function () {
   ))
   .pipe(gulp.dest(paths.public));
 });
+
+
+// When doing a minimal build, just symlink the bower components folder
+gulp.task('bower-components:assets:link', ['mkdirp'], function () {
+  return makeSymlink(paths.client + '/bower_components', paths.public + '/bower_components');
+});
+
+// When doing a full build, extract just the necessary files (currently just fonts)
+gulp.task('bower-components:assets:copy', function () {
+  return gulp.src(mainBowerFiles({
+    filter: '**/*.{eot,svg,ttf,woff}'
+  }))
+  .pipe($.tap(function(file) {
+    var relPath = path.relative(path.resolve(paths.client), file.path);
+    var match = /bower_components\/[^\/]*/.exec(relPath);
+    if (match) {
+      file.base = path.resolve(paths.client, match[0]);
+    }
+  }))
+  .pipe(gulp.dest(paths.public));
+});
+
+
+gulp.task('mkdirp', function () {
+  return nodefn.call(fs.mkdirp, paths.public);
+});
+
+function forEachAsset(cb) {
+  var assetsPath = paths.client + '/assets';
+  return nodefn.call(fs.readdir, assetsPath).then(function (files) {
+    return when.all(_.map(files, function (file) {
+      // Ignore dotfiles
+      if (/^\./.test(file)) {
+        return null;
+      }
+      return cb(file);
+    }));
+  });
+}
+
+// When doing a minimal build, just symlink all the assets
+gulp.task('assets:link', ['mkdirp'], function () {
+  return forEachAsset(function (file) {
+    return makeSymlink(paths.client + '/assets/' + file, paths.public + '/' + file);
+  });
+});
+
+// When doing a full build, remove the symlinks and copy them in full
+gulp.task('assets:clean', function () {
+  return forEachAsset(function (file) {
+    return nodefn.call(fs.rmrf, paths.public + '/' + file);
+  });
+});
+
+gulp.task('assets:copy', ['assets:clean'], function () {
+  return gulp.src(paths.client + '/assets/**')
+  .pipe(gulp.dest(paths.public));
+});
+
+
+// Minimal development build.
+gulp.task('build', ['index', 'js', 'css', 'bower-components:assets:link', 'assets:link']);
+
+// Production build before critical CSS.
+gulp.task('build:dist:base', ['index:dist', 'js:dist', 'css:dist', 'bower-components:assets:copy', 'assets:copy']);
+
+// Final production build
+gulp.task('build:dist', ['css:critical:replace']);

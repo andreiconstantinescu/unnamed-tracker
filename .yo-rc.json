@@ -1,0 +1,17 @@
+{
+  "generator-ayen": {
+    "appName": "Team Tracker",
+    "authorName": "Andrei Constantinescu",
+    "authorMail": "andrei.c@icloud.com",
+    "githubName": "andrei.constantinescu",
+    "packageName": "unnamed-tracker",
+    "stagingURL": "http://unnamed-tracker.herokuapp.com",
+    "description": "A time tracker for projects.",
+    "keywords": "tim, team, tracker",
+    "cssPrecompiler": "stylus",
+    "compilerFeatures": [
+      "templates"
+    ],
+    "templateType": "bare"
+  }
+}

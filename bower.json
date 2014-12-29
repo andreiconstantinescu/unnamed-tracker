@@ -1,14 +1,20 @@
 {
   "name": "unnamed-tracker",
-  "varsion": "0.0.1",
-  "description": "simple team task tracking tool",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/andreiconstantinescu/unnamed-tracker"
-  },
-  "author": "Andrei Constantinescu <andrei.c@icloud.com>",
-  "bugs": {
-    "url": "https://github.com/andreiconstantinescu/unnamed-tracker/issues"
-  },
-  "homepage": "https://github.com/andreiconstantinescu/test-website",
+  "version": "0.0.1",
+  "homepage": "https://github.com/andrei.constantinescu/unnamed-tracker",
+  "authors": [
+    "Andrei Constantinescu <andrei.c@icloud.com>"
+  ],
+  "description": "A time tracker for projects.",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0",
+    "fontawesome": "~4.2.0"
+  }
 }

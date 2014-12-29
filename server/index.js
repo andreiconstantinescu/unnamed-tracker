@@ -12,7 +12,7 @@ var port = parseInt(process.env.PORT, 10) || 4000;
 
 app.use(express.static(__dirname + '/../public'));
 
-app.get('/', function (request, response) {
+app.get('/api/1.0/local', function (request, response) {
   response.status(200);
   scanner.then(function (users) {
     response.send(users);

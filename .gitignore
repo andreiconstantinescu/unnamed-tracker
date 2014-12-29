@@ -10,3 +10,4 @@ node_modules
 /client/js/lib/templates.js
 /client/js/lib/bower-components.js
 /client/bower_components
+/server/lib/clients.json

@@ -21,6 +21,7 @@ var mainBowerFiles = require('main-bower-files');
 var browserSync = require('browser-sync');
 var useref = require('node-useref');
 var StreamQueue = require('streamqueue');
+var penthouse = require('penthouse');
 
 var browserify = require('browserify');
 var watchify = require('watchify');
@@ -29,6 +30,8 @@ var deamdify = require('deamdify');
 var aliasify = require('aliasify');
 var filterTransform = require('filter-transform');
 var resolveUseref = require('./lib/resolve-useref');
+
+var express = require('express');
 
 // Generate JS functions from JADE templates
 gulp.task('templates', function () {
@@ -181,4 +184,39 @@ gulp.task('css:dist', ['index.html:dist'], function () {
   return resolveUseref(droolCSS(), config.shared.refSpec.css, 'css/main.css')
     .pipe($.minifyCss())
     .pipe(gulp.dest(paths.public));
+});
+
+// Generate critical CSS
+gulp.task('css:critical', ['build:dist:base'], function (done) {
+  var app = express();
+  var port = 8765;
+
+  app.use(express.static(paths.public));
+
+  app.get('*', function (request, response) {
+    response.sendFile(path.resolve(paths.public, 'index.html'));
+  });
+
+  var server = app.listen(port, function () {
+    penthouse({
+      url: 'http://localhost:' + port,
+      css: path.join(paths.public, config.shared.mainCssPath),
+      width: 1440,
+      height: 900
+    }, function (error, critical) {
+      config.shared.criticalCSS = critical;
+      $.util.log('Critical CSS size: ' + critical.length + ' bytes.');
+      server.close();
+      done();
+    });
+  });
+});
+
+gulp.task('css:critical:replace', ['css:critical'], function () {
+  return gulp.src(path.join(paths.public + 'index.html'))
+  .pipe($.replace(
+    '<link rel=stylesheet href=' + config.shared.mainCssPath + '>',
+    '<style>' + config.shared.criticalCSS + '</style>'
+  ))
+  .pipe(gulp.dest(paths.public));
 });
